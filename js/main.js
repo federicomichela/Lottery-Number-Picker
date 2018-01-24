@@ -1,12 +1,13 @@
 // Global variables
 const RAND_MIN = 1;
 const RAND_MAX = 50;
+const PICKS_PER_GAME = 6;
 
 function generateNumbers() {
     /* Method to generate 6 random numbers, sort them and show them on UI */
 
     var numbers = [];
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < PICKS_PER_GAME; i++) {
         var number = _getRandomNumber();
         numbers.push(number);
     }
@@ -14,6 +15,7 @@ function generateNumbers() {
     numbers = numbers.sort();
 
     _renderNumbers(numbers);
+
 }
 
 function _renderNumbers(numbers) {
@@ -27,10 +29,10 @@ function _renderNumbers(numbers) {
         var $text = document.createTextNode(numbers[i]);
 
         // update the DOM
-        $ball.class = 'ball';
+        $ball.classList.add('ball');
         $ball.appendChild($text);
 
-        document.body.appendChild($ball);
+        document.getElementById('ballsRow').appendChild($ball);
     }
 }
 

@@ -13,16 +13,26 @@
 
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
+
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Bungee+Shade|Ewert" rel="stylesheet">
     </head>
     <body>
         <!--[if lte IE 9]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
         <![endif]-->
 
-        <!-- Add your site or application content here -->
-        <button type="button" class="btn btn--xl align--center" id="btnStartGame" onclick="generateNumbers()">START</button>
-        <div class="container"></div>
+        <div class="container">
+            <h1>Welcome to the Lottery Number Picker!</h1>
 
+            <div class="align--center">
+                <button type="button" class="btn btn--xl" id="btnStartGame" onclick="generateNumbers()">START</button>
+            </div>
+
+            <div id="ballsRow" class="balls-container"></div>
+
+            <div id="bonusBall" class="balls-container"></div>
+        </div>
 
         <!-- JS Libraries here to optimize page loading time -->
         <script src="js/vendor/modernizr-3.5.0.min.js"></script>
