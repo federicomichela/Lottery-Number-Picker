@@ -31,6 +31,13 @@ h1, h2, h3 {
     font-family: 'Ewert', cursive;
 }
 
+.balls-container {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-around;
+    margin-top: 50px;
+}
+
 .ball {
     width: 75px;
     height: 75px;
@@ -42,10 +49,7 @@ h1, h2, h3 {
     font-size: 2em;
 }
 
-.balls-container {
-    display: flex;
-    flex-flow: row;
-    align-content: space-between;
-    justify-content: space-between;
-    margin-top: 50px;
+.bonus-ball {
+    background: #ff6b00;
+    color: white;
 }

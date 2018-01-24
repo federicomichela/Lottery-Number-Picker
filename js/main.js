@@ -16,9 +16,31 @@ function generateNumbers() {
 
     _renderNumbers(numbers);
 
+    var msgText = document.createTextNode('Generatining Bonus Number ....');
+    var $message = document.createElement('h2');
+    $message.classList.add('timed-alert');
+    $message.appendChild(msgText);
+    document.getElementsByClassName('container')[0].appendChild($message);
+
+    setTimeout(function() {
+        var bonusNumber = _getRandomNumber();
+        var isBonus = true;
+
+        // display message
+        $message.parentNode.removeChild($message);
+
+        // generate a bonus number that do not match with an already extracted number
+        while (numbers.indexOf(bonusNumber) > -1) {
+            bonusNumber = _getRandomNumber();
+        }
+
+        // render bonus number
+        _renderNumbers([bonusNumber], true);
+    }, 3000);
+
 }
 
-function _renderNumbers(numbers) {
+function _renderNumbers(numbers, bonus) {
     /* Method to render numbers */
 
     for (var i in numbers) {
@@ -32,7 +54,15 @@ function _renderNumbers(numbers) {
         $ball.classList.add('ball');
         $ball.appendChild($text);
 
-        document.getElementById('ballsRow').appendChild($ball);
+        if (bonus) {
+            $ball.classList.add('bonus-ball');
+            var $bonusRow = document.createElement('DIV');
+            $bonusRow.classList.add('balls-container');
+            $bonusRow.appendChild($ball);
+            document.getElementsByClassName('container')[0].appendChild($bonusRow);
+        } else {
+            document.getElementById('ballsRow').appendChild($ball);
+        }
     }
 }
 
