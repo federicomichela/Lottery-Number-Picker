@@ -45,6 +45,24 @@ function play() {
     });
 }
 
+function showPage(e) {
+    var $target = this.event.target;
+    var page = null;
+
+    if ($target.hasAttribute('data-attr')) {
+        page = $target.getAttribute('data-attr');
+    } else {
+        page = $target.parentElement.getAttribute('data-attr');
+    }
+
+    console.log(page);
+    var containerID = '#' + page + 'Container';
+    var hideContainersSelector = '.container:not("'+ containerID +'")';
+
+    $(containerID).removeClass('hide');
+    $(hideContainersSelector).addClass('hide');
+};
+
 function _action(message, callback, removeMessage) {
     /* This method renders a message on UI, then executes a method.
      * Once the method is completed, it removes the message from the UI.

@@ -16,17 +16,47 @@
 
         <!-- Google Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Bungee+Shade|Ewert" rel="stylesheet">
+
+        <!-- Font Awesome -->
+        <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
     </head>
     <body>
         <!--[if lte IE 9]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
         <![endif]-->
 
-        <div class="container">
+        <nav>
+            <button type="button" class="btn btn--disguised" onclick="showPage()" data-attr="settings">
+                <i class="fas fa-cog"></i>
+            </button>
+        </nav>
+
+        <div class="container" id="gameContainer">
             <h1>Welcome to the Lottery Number Picker!</h1>
 
             <div class="align--center">
                 <button type="button" class="btn btn--xl" id="btnStartGame" onclick="play()">START</button>
+            </div>
+        </div>
+
+        <div class="container hide" id="settingsContainer">
+            <h2>Customise the game by configuring the settings below.</h2>
+
+            <div class="form-group">
+                <label>Number Range: </label>
+                <input type="number" placeholder="MIN" value="1" />
+                <input type="number" placeholder="MAX" value="49" />
+            </div>
+
+            <div class="row">
+                <button type="button" class="btn btn-md" onclick="showPage()" data-attr="game">
+                    <i class="fas fa-arrow-left"></i>
+                    BACK TO THE GAME
+                </button>
+                <button type="button" class="btn btn-md btn-primary" onclick="saveSettings()">
+                    <i class="fas fa-check"></i>
+                    SAVE
+                </button>
             </div>
         </div>
 
