@@ -74,7 +74,6 @@ nav {
     display: flex;
     flex-flow: row;
     justify-content: space-around;
-    margin-top: 50px;
 }
 
 .ball {
