@@ -43,8 +43,7 @@ h1, h2, h3 {
     height: 75px;
     line-height: 75px;
     border-radius: 50%;
-    background-color: black;
-    color: white;
+    border-pixel: 1px solid black;
     text-align: center;
     font-size: 2em;
 }
@@ -53,3 +52,9 @@ h1, h2, h3 {
     background: #ff6b00;
     color: white;
 }
+
+.ball.green { background-color: green; color: white;}
+.ball.pink { background-color: pink; }
+.ball.blue { background-color: blue;  color: white;}
+.ball.orange { background-color: orange; }
+.ball.black { background-color: black;  color: white;}

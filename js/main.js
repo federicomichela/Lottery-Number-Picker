@@ -3,45 +3,78 @@ const RAND_MIN = 1;
 const RAND_MAX = 50;
 const PICKS_PER_GAME = 6;
 
-function generateNumbers() {
+var gamesHistory = [];
+
+function play() {
     /* Method to generate 6 random numbers, sort them and show them on UI */
 
-    var numbers = [];
-    for (var i = 0; i < PICKS_PER_GAME; i++) {
-        var number = _getRandomNumber();
-        numbers.push(number);
-    }
+    // disable button to avoid new games to start before the end of the current one
+    document.getElementById('btnStartGame').setAttribute('disabled', 'disabled');
 
-    numbers = numbers.sort();
+    // eventually reset old game...
+    _resetGame();
 
-    _renderNumbers(numbers);
+    _action('Your Lottery Numbers Are ...', function() {
+        // generate random numbers
+        var numbers = [];
+        for (var i = 0; i < PICKS_PER_GAME; i++) {
+            var number = _getRandomNumber();
+            numbers.push(number);
+        }
 
-    var msgText = document.createTextNode('Generatining Bonus Number ....');
+        // sort numbers asc
+        numbers = numbers.sort();
+
+        // render numbers to UI
+        _renderNumbers(numbers);
+
+        // generate a bonus number that do not match with an already extracted number
+        _action('AND YOUR BONUS NUMBER IS ...', function() {
+            var bonusNumber = _getRandomNumber();
+            var isBonus = true;
+
+            while (numbers.indexOf(bonusNumber) > -1) {
+                bonusNumber = _getRandomNumber();
+            }
+            // render bonus number
+            _renderNumbers([bonusNumber], isBonus);
+
+            // re-enable start button to allow user to start a new game
+            document.getElementById('btnStartGame').removeAttribute('disabled');
+        });
+    });
+}
+
+function _action(message, callback, removeMessage) {
+    /* This method renders a message on UI, then executes a method.
+     * Once the method is completed, it removes the message from the UI.
+     */
+
+    // render message to UI
+    var msgText = document.createTextNode(message);
     var $message = document.createElement('h2');
-    $message.classList.add('timed-alert');
+    $message.classList.add('alert');
     $message.appendChild(msgText);
     document.getElementsByClassName('container')[0].appendChild($message);
 
     setTimeout(function() {
-        var bonusNumber = _getRandomNumber();
-        var isBonus = true;
+        // executes method
+        callback();
 
-        // display message
-        $message.parentNode.removeChild($message);
-
-        // generate a bonus number that do not match with an already extracted number
-        while (numbers.indexOf(bonusNumber) > -1) {
-            bonusNumber = _getRandomNumber();
+        // remove message
+        if (removeMessage) {
+            $message.parentNode.removeChild($message);
         }
-
-        // render bonus number
-        _renderNumbers([bonusNumber], true);
-    }, 3000);
-
+    }, 1000);
 }
 
 function _renderNumbers(numbers, bonus) {
     /* Method to render numbers */
+
+    // create a ball-container
+    var $bonusRow = document.createElement('DIV');
+    $bonusRow.classList.add('balls-container');
+    document.getElementsByClassName('container')[0].appendChild($bonusRow);
 
     for (var i in numbers) {
         // create the DOM element
@@ -56,12 +89,16 @@ function _renderNumbers(numbers, bonus) {
 
         if (bonus) {
             $ball.classList.add('bonus-ball');
+
             var $bonusRow = document.createElement('DIV');
             $bonusRow.classList.add('balls-container');
             $bonusRow.appendChild($ball);
             document.getElementsByClassName('container')[0].appendChild($bonusRow);
         } else {
-            document.getElementById('ballsRow').appendChild($ball);
+            // set the ball color
+            _setColor($ball);
+
+            document.getElementsByClassName('balls-container')[0].appendChild($ball);
         }
     }
 }
@@ -75,4 +112,33 @@ function _getRandomNumber() {
     var max = Math.ceil(RAND_MAX);
 
     return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function _resetGame() {
+    var remove = ['balls-container', 'alert'];
+    var $rows = null;
+
+    for (var i = 0; i < remove.length; i++) {
+        $rows = document.getElementsByClassName(remove[i]);
+
+        for (var j = 0; j < $rows.length; j++) {
+            $rows[j].parentNode.removeChild($rows[j]);
+        }
+    }
+}
+
+function _setColor($ball) {
+    var number = $ball.innerText;
+
+    if (number >= 1 && number < 10) {
+        $($ball).addClass('green');
+    } else if (number >= 10 && number < 20) {
+        $($ball).addClass('pink');
+    } else if (number >= 20 && number < 30) {
+        $($ball).addClass('blue');
+    } else if (number >= 30 && number < 40) {
+        $($ball).addClass('orange');
+    } else if (number >= 40 && number < 50) {
+        $($ball).addClass('black');
+    }
 }
