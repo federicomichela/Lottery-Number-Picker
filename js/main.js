@@ -65,33 +65,49 @@ var Game = function() {
 
                 // re-enable start button to allow user to start a new game
                 document.getElementById('btnStartGame').removeAttribute('disabled');
+
+                // updates history
+                me.updateHistory();
             });
         });
     };
 
-    /* Save the match in the game history and start a new round */
+    /* Save the match in the game history and */
+    this.updateHistory = function() {
+        // save current match in the history
+        this.history.push(this.currentMatch);
+
+        // updates history page table
+        document.getElementById('noResults').classList.add('hide');
+
+        var row = document.createElement('TR');
+        var last = this.history.length - 1;
+        var attributes = ['match', 'draw', 'bonus'];
+        for (var i in attributes) {
+            var attribute = attributes[i];
+            var value = this.history[last][attribute];
+            var cellContent = document.createTextNode(value);
+            var cell = document.createElement('TD')
+            cell.appendChild(cellContent);
+            row.appendChild(cell);
+        }
+        document.querySelector('#historyContainer table tbody').appendChild(row);
+    };
+
+    /* Start a new match */
     this._resetMatch = function() {
         if (isEmptyObject(this.currentMatch)) {
             // it's the first game there's nothing to reset
             return;
         }
-        // save current match in the history
-        this.history.push(this.currentMatch);
 
         // start a new match
         this.currentMatch = Object.create(MATCH);
         this.currentMatch.match = this.history.length + 1;
 
-        // reset UI
-        var remove = ['balls-container', 'alert'];
-        var $rows = null;
-
-        for (var i = 0; i < remove.length; i++) {
-            $rows = document.getElementsByClassName(remove[i]);
-
-            for (var j = 0; j < $rows.length; j++) {
-                $rows[j].parentNode.removeChild($rows[j]);
-            }
+        // reset game page UI
+        while (document.querySelector('#matchResultsContainer').hasChildNodes()) {
+            document.querySelector('#matchResultsContainer').removeChild(document.querySelector('#matchResultsContainer').lastChild);
         }
     };
 
@@ -100,7 +116,7 @@ var Game = function() {
         // create a ball-container
         var $bonusRow = document.createElement('DIV');
         $bonusRow.classList.add('balls-container');
-        document.getElementsByClassName('container')[0].appendChild($bonusRow);
+        document.getElementById('matchResultsContainer').appendChild($bonusRow);
 
         for (var i in numbers) {
             // create the DOM element
@@ -116,7 +132,7 @@ var Game = function() {
             if (bonus) {
                 $ball.classList.add('bonus-ball');
                 $bonusRow.appendChild($ball);
-                document.getElementsByClassName('container')[0].appendChild($bonusRow);
+                document.getElementById('matchResultsContainer').appendChild($bonusRow);
             } else {
                 // set the ball color
                 _setColor($ball);
@@ -142,10 +158,12 @@ function showPage() {
 
     console.log(page);
     var containerID = '#' + page + 'Container';
-    var hideContainersSelector = '.container:not("'+ containerID +'")';
 
-    $(containerID).removeClass('hide');
-    $(hideContainersSelector).addClass('hide');
+    for (var i = 0; i < document.getElementsByClassName('container').length; i++) {
+        var $container = document.getElementsByClassName('container')[i];
+        $container.classList.add('hide');
+    }
+    document.querySelector(containerID).classList.remove('hide');
 };
 
 function action(message, callback, removeMessage) {
@@ -158,7 +176,7 @@ function action(message, callback, removeMessage) {
     var $message = document.createElement('h2');
     $message.classList.add('alert');
     $message.appendChild(msgText);
-    document.getElementsByClassName('container')[0].appendChild($message);
+    document.getElementById('matchResultsContainer').appendChild($message);
 
     setTimeout(function() {
         // executes method
@@ -191,15 +209,15 @@ function _setColor($ball) {
     var number = $ball.innerText;
 
     if (number >= 1 && number < 10) {
-        $($ball).addClass('green');
+        $ball.classList.add('green');
     } else if (number >= 10 && number < 20) {
-        $($ball).addClass('pink');
+        $ball.classList.add('pink');
     } else if (number >= 20 && number < 30) {
-        $($ball).addClass('blue');
+        $ball.classList.add('blue');
     } else if (number >= 30 && number < 40) {
-        $($ball).addClass('orange');
+        $ball.classList.add('orange');
     } else if (number >= 40 && number < 50) {
-        $($ball).addClass('black');
+        $ball.classList.add('black');
     }
 }
 

@@ -26,8 +26,11 @@
         <![endif]-->
 
         <nav>
-            <button type="button" class="btn btn--disguised" onclick="showPage()" data-attr="settings">
-                <i class="fas fa-cog"></i>
+            <button type="button" class="btn btn--link btn--disguised" onclick="showPage()" data-attr="history">
+                <i class="fas fa-history"></i>History
+            </button>
+            <button type="button" class="btn btn--link btn--disguised" onclick="showPage()" data-attr="settings">
+                <i class="fas fa-cog"></i>Settings
             </button>
         </nav>
 
@@ -37,10 +40,13 @@
             <div class="align--center">
                 <button type="button" class="btn btn--xl" id="btnStartGame" onclick="newGame.startMatch()">START</button>
             </div>
+
+            <div id="matchResultsContainer"></div>
         </div>
 
         <div class="container hide" id="settingsContainer">
-            <h2>Customise the game by configuring the settings below.</h2>
+            <h2>Settings</h2>
+            <h3>Customise the game by configuring the settings below</h3>
 
             <div class="form-group">
                 <label>Number Range: </label>
@@ -60,17 +66,33 @@
             </div>
         </div>
 
-        <!-- JS Libraries here to optimize page loading time -->
-        <script src="js/vendor/modernizr-3.5.0.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
-        <script src="js/main.js"></script>
+        <div class="container hide" id="historyContainer">
+            <h2>Game History</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Match</th>
+                        <th>Lotto Numbers</th>
+                        <th>Bonus Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="noResults">
+                        <td colspan="3" class="center">
+                            You haven't played yet <i class="far fa-frown"></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <button type="button" class="btn btn-md" onclick="showPage()" data-attr="game">
+                    <i class="fas fa-arrow-left"></i>
+                    BACK TO THE GAME
+                </button>
+            </div>
+        </div>
 
-        <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
-        <script>
-            window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
-            ga('create','UA-XXXXX-Y','auto');ga('send','pageview')
-        </script>
-        <script src="https://www.google-analytics.com/analytics.js" async defer></script>
+        <!-- My javascript files -->
+        <script src="js/main.js"></script>
     </body>
 </html>
