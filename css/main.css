@@ -38,11 +38,15 @@ th, td { padding: 5px; }
 .form-group {
     padding: 10px;
 }
+
 .row {
-    display: inline-flex;
+    display: flex;
     flex-flow: row;
-    justify-content: space-between;
+    flex-wrap: wrap;
 }
+
+.row__space--between { justify-content: space-between; }
+.row__space--around { justify-content: space-around; }
 
 .align--center {
     margin-left: auto;
@@ -55,6 +59,12 @@ th, td { padding: 5px; }
     float: right;
     align-content: right;
     justify-content: right;
+}
+
+.align--left {
+    float: left;
+    align-content: left;
+    justify-content: left;
 }
 
 .btn {
@@ -87,12 +97,6 @@ th, td { padding: 5px; }
     border-color: transparent;
 }
 .btn--disguised:focus { outline: none; } /* hiding native outline rendered on click */
-
-.balls-container {
-    display: flex;
-    flex-flow: row;
-    justify-content: space-around;
-}
 
 .btn i { margin-right: 5px; }
 
