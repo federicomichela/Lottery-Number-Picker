@@ -19,12 +19,20 @@ table {
     width: 100%;
     margin-bottom: 10px;
 }
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
+
+table tbody tr:nth-child(even) { background-color: #ffeab1; }
+table tbody tr:nth-child(odd) { background-color: #ffda76; }
+
+table thead { background: #ffa500; font-family: 'Fontdiner Swanky', cursive; }
 
 th, td { padding: 5px; }
+
+table thead th:first-child {
+    border-radius: 20px 0 0 0;
+}
+table thead th:last-child {
+    border-radius: 0 20px 0 0;
+}
 
 .hide { display: none !important; }
 
@@ -120,12 +128,6 @@ th, td { padding: 5px; }
     background: #ff6b00;
     color: white;
 }
-
-.ball.green { background-color: green; color: white;}
-.ball.pink { background-color: pink; }
-.ball.blue { background-color: blue;  color: white;}
-.ball.orange { background-color: orange; }
-.ball.black { background-color: black;  color: white;}
 
 .color-picker {
     margin-left: 10px;
