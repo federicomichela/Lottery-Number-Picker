@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="css/main.css">
 
         <!-- Google Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Bungee+Shade|Ewert" rel="stylesheet">
+	    <link href="https://fonts.googleapis.com/css?family=Bungee+Shade|Fontdiner+Swanky" rel="stylesheet">
 
         <!-- Font Awesome -->
         <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
@@ -34,7 +34,7 @@
             </button>
         </nav>
 
-        <div class="container" id="gameContainer">
+        <div class="container page" id="gameContainer">
             <h1>Welcome to the Lottery Number Picker!</h1>
 
             <div class="align--center">
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <div class="container hide" id="settingsContainer">
+        <div class="container page hide" id="settingsContainer">
             <h2>Settings</h2>
             <h3>Customise the game by configuring the settings below</h3>
 
@@ -61,8 +61,8 @@
                     <label>Number Range: </label>
                 </div>
                 <div class="align--right">
-                    <input type="number" placeholder="MIN" value="1" id="minRange" />
-                    <input type="number" placeholder="MAX" value="50" id="maxRange" />
+                    <input type="number" placeholder="MIN" value="1" id="minRange" onchange="updateColorScheme(newGame)"/>
+                    <input type="number" placeholder="MAX" value="50" id="maxRange" onchange="updateColorScheme(newGame)"/>
                 </div>
             </div>
 
@@ -75,14 +75,16 @@
                 </div>
             </div>
 
-            <div class="form-group row row__space--between" id="configureColors">
-                <!--<div class="align&#45;&#45;left">-->
-                    <!--<label>Number Range: </label>-->
-                <!--</div>-->
-                <!--<div class="align&#45;&#45;right">-->
-                    <!--<input type="number" placeholder="MIN" value="1" />-->
-                    <!--<input type="number" placeholder="MAX" value="49" />-->
-                <!--</div>-->
+            <div class="container">
+	            <label>Customise the color of number ranges</label>
+
+	            <div class="form-group row row__space--between">
+		            <label>Group of Numbers Range </label>
+		            <label>Ball Text Color</label>
+		            <label>Ball Color</label>
+	            </div>
+
+				<div  id="configureColors"></div>
             </div>
 
             <div class="row row__space--between">
@@ -97,7 +99,7 @@
             </div>
         </div>
 
-        <div class="container hide" id="historyContainer">
+        <div class="container page hide" id="historyContainer">
             <h2>Game History</h2>
             <table>
                 <thead>

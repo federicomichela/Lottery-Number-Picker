@@ -13,18 +13,16 @@ Promise.prototype.delay = function(t) {
 const RANGE_MIN = 1;
 const RANGE_MAX = 50;
 const PICKS_PER_GAME = 6;
-const COLOR_SCHEME = {
-    'green': (1, 9),
-    'pink': (10, 19),
-    'blue': (20, 39),
-    'orange': (40, 49)
-};
+const COLOR_SCHEME = [
+    {group: 1, txtColor: '#ffffff', bgColor: '#cde9af', groupMin: 1, groupMax: 9},
+    {group: 2, txtColor: '#ffffff', bgColor: '#ffc0c6', groupMin: 10, groupMax: 19},
+    {group: 3, txtColor: '#ffffff', bgColor: '#4d4dff', groupMin: 20, groupMax: 29},
+    {group: 4, txtColor: '#ffffff', bgColor: '#ffa500', groupMin: 30, groupMax: 39},
+    {group: 5, txtColor: '#ffffff', bgColor: '#000000', groupMin: 40, groupMax: 49},
+];
 const MATCH = { match: 1, draw: [], bonus: null };
 
 var Game = function() {
-    // match: match number,
-    // draw: the series of numbers randomly generated base on settings,
-    // bonus: the bonus number randomly generated
     this.currentMatch = Object.create(MATCH);
 
     this.settings = {
@@ -62,11 +60,50 @@ var Game = function() {
         var minRange = parseInt(document.getElementById('minRange').value);
         var maxRange = parseInt(document.getElementById('maxRange').value);
         var picks = parseInt(document.getElementById('picks').value);
+        var $groupsColorScheme = document.getElementsByClassName('group-color-scheme');
+
+        if (!minRange || ! maxRange || !picks) {
+        	var msg = 'Sorry! One or more invalid values';
+        	alert(msg);
+        	return
+        }
+
+        if (picks < 1) {
+        	var msg = 'Sorry! Invalid value for "Picks per drawn". Please make sure to enter a positive number.';
+        	alert(msg);
+        	return
+        }
+
+        if (minRange > maxRange) {
+	        var msg = 'Sorry! Min range number cannot be higher that max range number.';
+	        alert(msg);
+	        return
+        }
+
+	    if (maxRange < minRange) {
+		    var msg = 'Sorry! Max range number cannot be lower that min range number.';
+		    alert(msg);
+		    return
+	    }
+
+	    // TODO: This is a terrible way to prevent the computation overload. Need to replace this with an appropriate solution
+	    if ((maxRange - minRange + 1) < pick * 3) {
+		    var msg = 'Sorry! You are only allowed to set date ranges that are three times bigger than the number of picks for drawn!';
+		    alert(msg);
+		    return
+	    }
 
         if (picks > (maxRange - minRange + 1)) {
-            var msg = 'You cannot select a number of picks higher than the available numbers in the range.';
+            var msg = 'Sorry! You cannot select a number of picks higher than the available numbers in the range.';
             alert(msg);
             return;
+        }
+
+	    var groups = Math.ceil((rangeMaxValue - rangeMinValue) / 10);
+        if (!$groupsColorScheme || $groupsColorScheme.length < groups) {
+        	var msg = 'Sorry! Missing color schemes for some groups';
+        	alert(msg);
+        	return
         }
 
         if (minRange !== null && minRange !== undefined) {
@@ -78,6 +115,16 @@ var Game = function() {
         if (picks !== null && picks !== undefined) {
             this.settings.picks = picks;
         }
+
+        for (var i = 0; i < $groupsColorScheme.length; i++) {
+			var textColor = $groupsColorScheme[i].querySelector('.text-color').value;
+	        var bgColor = $groupsColorScheme[i].querySelector('.bg-color').value;
+
+	        this.settings.colorScheme[i].txtColor = textColor;
+	        this.settings.colorScheme[i].bgColor = bgColor;
+        }
+
+        this.updateColorSchemeGroups();
 
         alert('Game Settings Successfully Updated');
     };
@@ -100,7 +147,7 @@ var Game = function() {
 
         // render result to UI
         document.querySelector('#drawContainer .alert').classList.remove('hide');
-        renderNumbers(document.querySelector('#drawContainer'), me.currentMatch.draw);
+        this.renderNumbers(document.querySelector('#drawContainer'), me.currentMatch.draw);
     };
 
     this._drawBonus = function() {
@@ -116,7 +163,7 @@ var Game = function() {
 
         // render result to UI
         document.querySelector('#bonusContainer .alert').classList.remove('hide');
-        renderNumbers(document.querySelector('#bonusContainer'), [me.currentMatch.bonus]);
+        this.renderNumbers(document.querySelector('#bonusContainer'), [me.currentMatch.bonus]);
     };
 
     /* Save the match in the game history and */
@@ -166,32 +213,74 @@ var Game = function() {
             document.querySelector('.alert')[i].classList.add('hide');
         }
     };
-};
 
-/* Method to render numbers */
-function renderNumbers($container, numbers) {
-    // create a ball-container
-    var $bonusRow = document.createElement('DIV');
-    $bonusRow.classList.add('row');
-    $bonusRow.classList.add('row__space--around');
-    $container.appendChild($bonusRow);
+    /* Method to render numbers */
+    this.renderNumbers = function($container, numbers) {
+        // create a ball-container
+        var $bonusRow = document.createElement('DIV');
+        $bonusRow.classList.add('row');
+        $bonusRow.classList.add('row__space--around');
+        $container.appendChild($bonusRow);
 
-    for (var i in numbers) {
-        // create the DOM element
-        var $ball = document.createElement('DIV');
+        for (var i in numbers) {
+            var html = '<div class="ball"><span>' + numbers[i] + '</span>';
+            var $document = new DOMParser().parseFromString(html, 'text/html');
+            var $ball = $document.documentElement.querySelector('.ball');
 
-        // assign a class for styling purposes
-        var $text = document.createTextNode(numbers[i]);
+            // set the ball color
+            this._setColor($ball);
 
-        // update the DOM
-        $ball.classList.add('ball');
-        $ball.appendChild($text);
+            $container.querySelector('div.row').appendChild($ball);
+        }
+    };
 
-        // set the ball color
-        _setColor($ball);
+    this._setColor = function($ball) {
+        var number = $ball.innerText;
 
-        $container.querySelector('div.row').appendChild($ball);
-    }
+        for (var i = 0; i < this.settings.colorScheme.length; i++) {
+            var groupColorScheme = this.settings.colorScheme[i];
+            if (number >= groupColorScheme.groupMin && number <= groupColorScheme.groupMax) {
+                $ball.style.backgroundColor = groupColorScheme.bgColor;
+                $ball.style.color = groupColorScheme.txtColor;
+                return;
+            }
+        }
+    };
+
+    this.updateColorSchemeGroups = function() {
+        // get numbers from UI to have updated values
+	    var rangeMinValue = parseInt(document.getElementById('minRange').value);
+	    var rangeMaxValue = parseInt(document.getElementById('maxRange').value);
+
+	    // identify how many configurable groups we need to render
+	    // we use Math.ceil because the remainder of the division forms a new group...
+	    // e.g 42 / 10 == 4 groups of 10 elements + 1 group of 2 elements
+	    var groups = Math.ceil((rangeMaxValue - rangeMinValue) / 10);
+
+        // if there are less groups than the ones in settings.colorScheme, remove the difference
+        if (this.settings.colorScheme.length > groups) {
+            this.settings.colorScheme = this.settings.colorScheme.slice(0, groups);
+        }
+
+        // update and eventually add groups colorSchemes
+        for (var i = 0; i < groups; i++) {
+            var groupMin = rangeMinValue + (i * 10);              // inclusive
+            var groupMax = rangeMinValue + (i * 10) + 10 - 1;         // exclusive
+
+            if (i < this.settings.colorScheme.length) {
+                this.settings.colorScheme[i].groupMin = groupMin;
+                this.settings.colorScheme[i].groupMax = groupMax;
+            } else {
+                this.settings.colorScheme.push({
+                    group: i + 1,
+                    groupMin: groupMin,
+                    groupMax: groupMax,
+                    txtColor: '#000000',
+                    bgColor: '#dddddd'
+                });
+            }
+        }
+    };
 };
 
 function showPage() {
@@ -209,35 +298,12 @@ function showPage() {
 
     var containerID = '#' + page + 'Container';
 
-    for (var i = 0; i < document.getElementsByClassName('container').length; i++) {
-        var $container = document.getElementsByClassName('container')[i];
+    for (var i = 0; i < document.getElementsByClassName('page').length; i++) {
+        var $container = document.getElementsByClassName('page')[i];
         $container.classList.add('hide');
     }
     document.querySelector(containerID).classList.remove('hide');
 };
-
-function action(message, callback, removeMessage) {
-    /* This method renders a message on UI, then executes a method.
-     * Once the method is completed, it removes the message from the UI.
-     */
-
-    // render message to UI
-    var msgText = document.createTextNode(message);
-    var $message = document.createElement('h2');
-    $message.classList.add('alert');
-    $message.appendChild(msgText);
-    document.getElementById('matchResultsContainer').appendChild($message);
-
-    setTimeout(function() {
-        // executes method
-        callback();
-
-        // remove message
-        if (removeMessage) {
-            $message.parentNode.removeChild($message);
-        }
-    }, 1000);
-}
 
 function getRandomNumber(rangeMin, rangeMax) {
     /* This method generates a random Integer
@@ -255,20 +321,35 @@ function isEmptyObject(obj) {
     return Object.keys(obj).length === 0;
 }
 
-function _setColor($ball) {
-    var number = $ball.innerText;
+function initSettingsColorConfig(game) {
+    /* This method updates the UI with a set of options that allows to change the drawn balls color. */
+    // eventually clear existing color scheme groups from the UI
+	if (document.querySelector('#configureColors')) {
+		while (document.querySelector('#configureColors').hasChildNodes()) {
+			document.querySelector('#configureColors').removeChild(document.querySelector('#configureColors').lastChild);
+		}
+	}
 
-    if (number >= 1 && number < 10) {
-        $ball.classList.add('green');
-    } else if (number >= 10 && number < 20) {
-        $ball.classList.add('pink');
-    } else if (number >= 20 && number < 30) {
-        $ball.classList.add('blue');
-    } else if (number >= 30 && number < 40) {
-        $ball.classList.add('orange');
-    } else if (number >= 40 && number < 50) {
-        $ball.classList.add('black');
+	// create color scheme group from current settings configuration
+    for (var i = 0; i < game.settings.colorScheme.length; i++) {
+        var group = game.settings.colorScheme[i];
+
+        var html = '<div class="form-group row row__space--between group-color-scheme">';
+        html += '[' + [group.groupMin, group.groupMax].join(", ") + ']';
+        html += '<input type="color"  class="color-picker text-color" title="ball background color" value="' + group.txtColor+ '"/>';
+        html += '<input type="color" class="color-picker bg-color" title="ball text color" value="' + group.bgColor+ '"/>';
+        html += '</div>';
+        var $document = new DOMParser().parseFromString(html, 'text/html');
+        var $group = $document.documentElement.querySelector('.row');
+
+        document.getElementById('configureColors').appendChild($group);
     }
+};
+
+function updateColorScheme(game) {
+	game.updateColorSchemeGroups();
+	initSettingsColorConfig(game);
 }
 
 var newGame = new Game();
+initSettingsColorConfig(newGame);
