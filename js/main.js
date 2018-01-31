@@ -1,14 +1,3 @@
-function delay(t, v) {
-    return new Promise(function(resolve) {
-        setTimeout(resolve.bind(null, v), t)
-    });
-}
-Promise.prototype.delay = function(t) {
-    return this.then(function(v) {
-        return delay(t, v);
-    });
-};
-
 // Global variables
 const RANGE_MIN = 1;
 const RANGE_MAX = 50;
@@ -87,7 +76,7 @@ var Game = function() {
 	    }
 
 	    // TODO: This is a terrible way to prevent the computation overload. Need to replace this with an appropriate solution
-	    if ((maxRange - minRange + 1) < pick * 3) {
+	    if ((maxRange - minRange + 1) < picks * 3) {
 		    var msg = 'Sorry! You are only allowed to set date ranges that are three times bigger than the number of picks for drawn!';
 		    alert(msg);
 		    return
@@ -99,7 +88,8 @@ var Game = function() {
             return;
         }
 
-	    var groups = Math.ceil((rangeMaxValue - rangeMinValue) / 10);
+        // calculate the groups of numbers in the new range to assign colors to
+	    var groups = Math.ceil((maxRange - minRange) / 10);
         if (!$groupsColorScheme || $groupsColorScheme.length < groups) {
         	var msg = 'Sorry! Missing color schemes for some groups';
         	alert(msg);
