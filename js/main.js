@@ -75,13 +75,6 @@ var Game = function() {
 		    return
 	    }
 
-	    // TODO: This is a terrible way to prevent the computation overload. Need to replace this with an appropriate solution
-	    if ((maxRange - minRange + 1) < picks * 3) {
-		    var msg = 'Sorry! You are only allowed to set date ranges that are three times bigger than the number of picks for drawn!';
-		    alert(msg);
-		    return
-	    }
-
         if (picks > (maxRange - minRange + 1)) {
             var msg = 'Sorry! You cannot select a number of picks higher than the available numbers in the range.';
             alert(msg);
@@ -122,18 +115,23 @@ var Game = function() {
     this._drawLottery = function() {
         var me = this;
         var numbers = [];
+
+        // generate list of availble numbers
+	    for (i=this.settings.rangeMinValue; i < this.settings.rangeMaxValue; i++) {
+			numbers.push(i);
+	    }
+
+	    // generate drawn
+        var drawn = [];
         for (var i = 0; i < this.settings.picks; i++) {
-            var number = getRandomNumber(this.settings.rangeMinValue, this.settings.rangeMaxValue);
+            var number = numbers[Math.floor(Math.random() * numbers.length)];
+            var numberIndex = numbers.indexOf(number);
+            numbers.splice(numberIndex, 1);
 
-            // if number already picked, generate a new one in order to obtain a list of unique numbers
-            while (numbers.indexOf(number) >= 0) {
-                number = getRandomNumber(this.settings.rangeMinValue, this.settings.rangeMaxValue);
-            }
-
-            numbers.push(number);
+	        drawn.push(number);
         }
 
-        this.currentMatch.draw = numbers.sort(function(a, b) { return a - b; });
+        this.currentMatch.draw = drawn.sort(function(a, b) { return a - b; });
 
         // render result to UI
         document.querySelector('#drawContainer .alert').classList.remove('hide');
